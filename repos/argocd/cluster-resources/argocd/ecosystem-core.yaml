@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ecosystem-core
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: cluster-resources
+  source:
+    repoURL: registry.cloudogu.com/k8s
+    chart: ecosystem-core
+    targetRevision: "2.0.2"
+    path: "."  # required for Helm OCI sources
+    helm:
+      valuesObject:
+        skipPreconditionValidation: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ecosystem
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true # safer deletion

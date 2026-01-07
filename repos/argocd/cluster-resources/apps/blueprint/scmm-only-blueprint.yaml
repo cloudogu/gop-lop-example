@@ -1,0 +1,18 @@
+apiVersion: k8s.cloudogu.com/v3
+kind: Blueprint
+metadata:
+  labels:
+    app.kubernetes.io/name: blueprint
+  name: scmm-only-blueprint
+spec:
+  displayName: SCMM only
+  blueprint:
+    dogus:
+      - name: official/cas
+        version: "7.2.7-5"
+      - name: official/postfix
+        version: "3.10.7-1"
+      - name: official/ldap
+        version: "2.6.8-4"
+      - name: official/scm
+        version: "3.11.1-2"
