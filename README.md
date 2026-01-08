@@ -1,20 +1,24 @@
 # gop-lop-example
 
-
 ## Running locally
 
-```bash
-VERSION='0.14.0'
-  
-bash <(curl -s \
-  https://raw.githubusercontent.com/cloudogu/gitops-playground/main/scripts/init-cluster.sh) --bind-ports=443:443
+Note: For now this only runs on Linux.
 
+Reason: In this setup using k3d LOP is only accessible via the container IP address of the k3d container.
+On Mac and Windows with Docker Desktop these are not accessible from the host.
+
+If you are running Ubuntu you might have to do the following to avoid crashes of the LDAP pod:  
+`sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.slapd`
+
+```bash
   DOGU_REGISTRY_USERNAME='xzy' # or robot$...
   DOGU_REGISTRY_PASSWORD=''
 NAMESPACE=ecosystem
+VERSION='0.14.0'
 
-# Necessary for ldap dogu on Ubuntu 😱 
-sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.slapd
+# Start k3d 
+bash <(curl -s \
+  https://raw.githubusercontent.com/cloudogu/gitops-playground/$VERSION/scripts/init-cluster.sh)
 
 # For velero
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/v6.2.1/client/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml
@@ -96,8 +100,13 @@ k port-forward -n argocd svc/argocd-server 8081:80
 * SCM-Manager (git server) UI at http://localhost:8080
 * the Argo CD UI at http://localhost:8081
 
-Another 5-10 Minutes later, LOP is available at
-https://localhost/scm
+(login with `admin`/`admin`)
+
+Another 5-10 Minutes later, you can access LOP like so
+
+```bash
+xdg-open https://$(kubectl get svc ces-loadbalancer  -o jsonpath='{.status.loadBalancer.ingress[0].ip}')/scm
+```
 
 You can log in with user `admin` and this password:
 ```bash
