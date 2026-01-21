@@ -1,11 +1,19 @@
 # gop-lop-example
 
+Deploy a GitOps-managed LowOps Platform (LOP) on a plain Kubernetes cluster.
+
+This is an example that combines the usage of [GOP](https://github.com/cloudogu/gitops-playground) with [LOP](https://github.com/cloudogu/k8s-ecosystem/).  
+GOP is used to boostrap LOP and manage it via GitOps via Argo CD.  
+This example lays the foundation to centrally manage multiple LOP instances/tenants 🚀.
+
 ## Running locally
 
-Note: For now this only runs on Linux.
+Note: For now this only runs on Linux and maybe also on MacOS.
 
 Reason: In this setup using k3d LOP is only accessible via the container IP address of the k3d container.
-On Mac and Windows with Docker Desktop these are not accessible from the host.
+With Docker Desktop (on Mac and Windows) these are not accessible from the host.
+It should work on Mac when using Orbstack, though.
+
 
 If you are running Ubuntu you might have to do the following to avoid crashes of the LDAP pod:  
 `sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.slapd`
