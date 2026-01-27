@@ -12,11 +12,22 @@ spec:
   source:
     repoURL: registry.cloudogu.com/k8s
     chart: ecosystem-core
-    targetRevision: "2.0.2"
+    targetRevision: "2.2.1" # On update, update k8s-ces-gateway.version as well!
     path: "."  # required for Helm OCI sources
     helm:
       valuesObject:
-        skipPreconditionValidation: true
+        components:
+          k8s-ces-gateway:
+            # See https://github.com/cloudogu/ecosystem-core/blob/develop/k8s/helm/values.yaml
+            version: 2.0.1
+            valuesObject:
+              # Listen to ingresses from other namespaces
+              ingress-nginx:
+                controller:
+                  scope:
+                    enabled: false
+                    # Leave empty for all namespaces
+                    namespaceSelector: "kubernetes.io/metadata.name in (ecosystem, argocd, scm-manager)"
   destination:
     server: https://kubernetes.default.svc
     namespace: ecosystem
