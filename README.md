@@ -108,7 +108,7 @@ k port-forward -n argocd svc/argocd-server 8081:80
 * SCM-Manager (git server) UI at http://localhost:8080
 * the Argo CD UI at http://localhost:8081
 
-(login with `admin`/`admin`)
+(login with `admin`/`admin`) - you **should** change it!
 
 Another 5-10 Minutes later, you can access LOP like so
 
@@ -120,6 +120,28 @@ You can log in with user `admin` and this password:
 ```bash
 kubectl get secret ldap-config -o go-template='{{index .data "config.yaml" | base64decode}}'
 ```
+
+
+## Change default passwords
+
+Argo CD:
+```shell
+NEW_PASSWORD="YourNewPassword123!"
+
+BCRYPT_HASH=$(htpasswd -nB -b admin "$NEW_PASSWORD" | cut -d ":" -f 2)
+
+kubectl -n argocd patch secret argocd-secret \
+  -p "{\"stringData\": {\"admin.password\": \"$BCRYPT_HASH\", \"admin.passwordMtime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}}"
+  
+kubectl patch secret  argocd-repo-creds-scm -n argocd -p "{\"data\":{\"password\":\"$(echo -n "$NEW_PASSWORD" | base64)\"}}"
+
+# SCM-Manager 
+curl --fail -u 'admin:admin' 'http://localhost:8080/scm/api/v2/me/password' \
+  -X PUT \
+  -H 'Content-Type: application/vnd.scmm-passwordChange+json;v=2' \
+  --data-raw '{"oldPassword":"admin","newPassword":"'"$NEW_PASSWORD"'"}'
+```
+
 
 ## See also
 * https://github.com/cloudogu/ecosystem-core/blob/develop/docs/operations/argoCD_en.md
