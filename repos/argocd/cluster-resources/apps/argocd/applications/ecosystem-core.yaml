@@ -17,6 +17,12 @@ spec:
     helm:
       valuesObject:
         components:
+          k8s-ces-assets:
+            valuesObject:
+              nginx:
+                manager:
+                  config:
+                    defaultDogu: "redmine"
           k8s-ces-gateway:
             valuesObject:
               # Listen to ingresses from other namespaces
