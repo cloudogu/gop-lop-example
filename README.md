@@ -110,6 +110,8 @@ config:
         templating: true
         type: FOLDER_BASED
         overwriteMode: UPGRADE
+#    variables:
+#      fqdn: lop.example.com
 EOF
 ```
 
