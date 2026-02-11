@@ -160,6 +160,42 @@ curl --fail -u 'admin:admin' 'http://localhost:8080/scm/api/v2/me/password' \
   --data-raw '{"oldPassword":"admin","newPassword":"'"$NEW_PASSWORD"'"}'
 ```
 
+## Upgrading GOP using GOP
+
+Remove `overwriteMode: UPGRADE` or blueprint will be overwritten
+
+Problem:
+* `UPGRADE` - would overwrite blueprint
+* But we need `repos/argocd/cluster-resources/apps/argocd/projects/cluster-resources.yaml` -> `sourceRepos: *` or additional source repo `registry.cloudogu.com/k8s`
+
+http://localhost:8080/scm/repo/argocd/cluster-resources/code/sources/main/apps/argocd/applications/gop.yaml/
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gop
+  namespace: argocd
+spec:
+  project: argocd
+  sources:
+    - repoURL: ghcr.io/cloudogu
+      chart: gop-helm
+      targetRevision: 0.4.0
+      helm:
+        valuesObject:
+          # GOP config used to install gop
+          # kubectl get cm -n gop -l  app.kubernetes.io/instance=gop  -o jsonpath='{.items[0].data.config\.yaml}'
+          #image:
+          #  tag: ...
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gop
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+```
 
 ## See also
 * https://github.com/cloudogu/ecosystem-core/blob/develop/docs/operations/argoCD_en.md
