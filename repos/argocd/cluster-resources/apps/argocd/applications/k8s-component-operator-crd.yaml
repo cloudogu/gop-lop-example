@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: registry.cloudogu.com/k8s
     chart: k8s-component-operator-crd
-    targetRevision: "1.10.0"
+    targetRevision: "1.13.0"
     path: "." # required for Helm OCI sources
   destination:
     server: https://kubernetes.default.svc

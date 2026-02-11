@@ -12,14 +12,12 @@ spec:
   source:
     repoURL: registry.cloudogu.com/k8s
     chart: ecosystem-core
-    targetRevision: "2.2.1" # On update, update k8s-ces-gateway.version as well!
+    targetRevision: "3.0.0"
     path: "."  # required for Helm OCI sources
     helm:
       valuesObject:
         components:
           k8s-ces-gateway:
-            # See https://github.com/cloudogu/ecosystem-core/blob/develop/k8s/helm/values.yaml
-            version: 2.0.1
             valuesObject:
               # Listen to ingresses from other namespaces
               ingress-nginx:
